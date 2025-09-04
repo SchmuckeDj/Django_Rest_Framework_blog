@@ -45,8 +45,7 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 PROJECT_APPS = [
-
-
+    'apps.blog',
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
