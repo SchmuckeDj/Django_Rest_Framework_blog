@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.text import slugify
 import uuid
 
 
@@ -15,7 +16,7 @@ def category_thumbnail_path(instance, filename):
 
 class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True)
+    parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
 
     name = models.CharField(max_length=255)
     title = models.CharField(max_length=255, blank=True, null=True)
@@ -44,17 +45,47 @@ class Post(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-    thumbnail = models.ImageField(upload_to=blog_thumbnail_path)
-    keywords = models.CharField(max_length=128)
-    slug = models.CharField(max_length=128)
-    status = models.CharField(max_length=10, choices=status_options, default='draft')
+    thumbnail  = models.ImageField(upload_to=blog_thumbnail_path)
+    keywords  = models.CharField(max_length=128)
+    slug  = models.CharField(max_length=128)
+    status  = models.CharField(max_length=10, choices=status_options, default='draft')
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     objects = models.Manager() # default manager
     postObject = PostObject() # custom manager
 
     class Meta:
-        ordering = ('-published',)
+        ordering = ('status','-created_at')
 
 
     def __str__(self):
         return self.title
+    
+    
+class Heading(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    post = models.ForeignKey(Post, related_name='headings', on_delete=models.PROTECT)
+    
+    title = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255)
+    level = models.IntegerField (
+        choices=(
+            (1, 'H1'),
+            (2, 'H2'),
+            (3, 'H3'),
+            (4, 'H4'),
+            (5, 'H5'),
+            (6, 'H6'),
+        )
+    )
+    order = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = ['order']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+
+    
