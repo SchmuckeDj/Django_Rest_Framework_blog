@@ -51,9 +51,33 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'channels',
     'channels_redis',
+    'django_ckeditor_5',
+    
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
+
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': [
+            'heading', '|',
+            'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', '|',
+            'link', 'blockQuote', 'codeBlock', '|',
+            'bulletedList', 'numberedList', 'todoList', '|',
+            'outdent', 'indent', '|',
+            'insertTable', 'imageUpload', 'mediaEmbed', 'horizontalLine', 'pageBreak', '|',
+            'undo', 'redo', '|',
+            'fontSize', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
+            'alignment', '|',
+            'removeFormat', 'sourceEditing'
+        ],
+        'height': 600,
+        'width': '100%',
+    }
+}
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -143,6 +167,10 @@ USE_TZ = True
 STATIC_LOCATIONS = 'static' #luego se agrega esto
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static') #esto se agrega 
+# Media files (user uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

@@ -20,8 +20,27 @@ from.views import TestView
 from django.conf.urls.static import static
 from django.conf import settings
 
+
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('api/blog/', include('apps.blog.urls')),
     path('admin/', admin.site.urls),
+    path('ckeditor5/', include('django_ckeditor_5.urls')),
+    path('test/', TestView.as_view(), name='test'),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
+
+'''urlpatterns = [
+    path('api/blog/', include('apps.blog.urls')),
+    path('admin/', admin.site.urls),
+    path('ckeditor5/', include('django_ckeditor_5.urls')),
     path('test/', TestView.as_view(), name='test'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+'''
