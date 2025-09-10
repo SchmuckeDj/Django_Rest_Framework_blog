@@ -87,16 +87,17 @@ class PostAnalytics(models.Model):
 
     def increment_clicks(self):
         self.clicks += 1
+        self.save()
         self._update_click_through_rate()
     
     def _update_click_through_rate(self):
         if self.impressions > 0:
             self.clicks_through_rate = (self.clicks / self.impressions) * 100
-        else:
-            self.clicks_through_rate = 0.0
+            self.save()
 
     def increment_impressions(self):
         self.impressions += 1
+        self.save()
         self._update_click_through_rate()
 
     def increment_views(self):
@@ -134,4 +135,7 @@ class Heading(models.Model):
         super().save(*args, **kwargs)
 
 
-    
+@receiver(post_save, sender=Post)
+def create_post_analytics(sender, instance, created, **kwargs):
+    if created:
+        PostAnalytics.objects.create(post=instance)

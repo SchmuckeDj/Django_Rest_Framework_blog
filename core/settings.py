@@ -52,6 +52,7 @@ THIRD_PARTY_APPS = [
     'channels',
     'channels_redis',
     'django_ckeditor_5',
+    'django_celery_results',
     
 ]
 
@@ -168,7 +169,7 @@ STATIC_LOCATIONS = 'static' #luego se agrega esto
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static') #esto se agrega 
 # Media files (user uploads)
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
@@ -204,3 +205,25 @@ CACHES = {
 }
 
 CHANNELS_ALLOWED_ORIGINS = "http://localhost:3000"
+
+# Celery Configuration
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+CELERY_BROKER_URL = env('REDIS_URL')
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'visibility_timeout': 3600,
+    'socket_timeout': 5,
+    'retry_on_timeout': True
+
+    }  # 1 hour
+
+CELERY_RESULT_BACKEND = 'django-db'  # Using Django database as result backend
+CELERY_CACHE_BACKEND = 'default'  # Using the default cache backend
+CELERY_IMPORTS = (
+    'core.tasks',
+    'apps.blog.tasks',
+)
